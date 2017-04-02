@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>渠道处理</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/handsontable/0.31.1/handsontable.full.min.css" rel="stylesheet">
+    <style>
+        /* All headers */
+        .handsontable th {
+            background-color: #eeeeee;
+        }
+
+        .handsontable {
+            width: 100%;
+        }
+
+        .width-table {
+            width: 100%;
+        }
+        .nav-pills>li {
+            float: none;
+        }
+        .link-active {
+            color: #fff;
+            background-color: #08c;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
+    <a class="navbar-brand" href="#">渠道链生成</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-faded sidebar">
+            <ul id="channel_list" class="nav nav-pills flex-column">
+                <% for(var i=0; i<channelList.length; i++) {%>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="makeChannel('<%= channelList[i].vhmc%>','<%= channelList[i].vhmp%>')"><%= channelList[i].channelName%></a>
+                </li>
+                <% } %>
+                <li id="li_button" class="nav-item" style="text-align: center">
+                    <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#myModal">+ 添加新渠道</button>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 pt-3">
+            <h4>链接生成</h4>
+            <div>
+                <div id="example"></div>
+            </div>
+            <div style="text-align: center;margin-top: 30px">
+                <button type="button" class="btn btn-default navbar-btn" onclick="makeUrl()">生成短链接</button>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">添加渠道</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="channel_form" action="/submitChannel">
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">渠道名称:</label>
+                        <input type="text" class="form-control" name="channelName" id="recipient-name">
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <label for="vhmc" class="form-control-label">vHMC:</label>
+                                <input id="vhmc" type="text" name="vhmc" class="form-control" aria-label="Text input with checkbox">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="vhmp" class="form-control-label">vHMP:</label>
+                                <input id="vhmp" name="vhmp" type="text" class="form-control"
+                                       aria-label="Text input with radio button">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="addChannel()" data-dismiss="modal">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://cdn.staticfile.org/jquery/3.1.1/jquery.min.js"><\/script>')</script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="//cdn.bootcss.com/handsontable/0.31.1/handsontable.full.min.js"></script>
+<script>
+    function makeUrl() {
+        var dataArr = hot.getData();
+        if (dataArr && dataArr.length) {
+            dataArr.forEach(function (item, index) {
+                if (!item[1]) {return;}
+                $.post( "/makeUrl", {id:item[0],url:item[1],custom:item[2],result:item[3]}).done(function (resp) {
+                    var repObj = JSON.parse(resp);
+                    hot.setDataAtCell(index,3,repObj['err_msg']||repObj['tinyurl']);
+                },"json");
+            })
+        }
+    }
+    /*
+     * url 目标url
+     * arg 需要替换的参数名称
+     * arg_val 替换后的参数的值
+     * return url 参数替换后的url
+     */
+    function changeURLArg(url,arg,arg_val){
+        var pattern=arg+'=([^&]*)';
+        var replaceText=arg+'='+arg_val;
+        var eval2 = eval;
+        if(url.match(pattern)){
+            var tmp='/('+ arg+'=)([^&]*)/gi';
+            tmp=url.replace(eval2(tmp),replaceText);
+            return tmp;
+        }else{
+            if(url.match('[\?]')){
+                return url+'&'+replaceText;
+            }else{
+                return url+'?'+replaceText;
+            }
+        }
+        return url+'\n'+arg+'\n'+arg_val;
+    }
+    function makeChannel(vhmc,vhmp) {
+        var dataArr = hot.getData();
+        var _$curr = $(event.target);
+        _$curr.parent().siblings().find('a').removeClass('link-active');
+        if (!_$curr.hasClass('link-active')) {
+            _$curr.addClass('link-active');
+        }
+        if (dataArr && dataArr.length) {
+            dataArr.forEach(function (item, index) {
+                if (!item[1]) {return;}
+                var url = changeURLArg(item[1],'vHMC',vhmc);
+                url = changeURLArg(url,'vHMP',vhmp);
+                hot.setDataAtCell(index,1,url);
+            })
+        }
+    }
+    function addChannel() {
+        let formArr = $("#channel_form").serializeArray();
+        $.post( "/submitChannel", formArr).done(function (resp) {
+            if (resp.code == 0) {
+                $('#li_button').before('<li class="nav-item"><a class="nav-link" onclick="makeChannel(\''+resp.data.vhmc+'\',\''+resp.data.vhmp+'\')">'+resp.data.channelName+'</li>')
+            } else {
+                alert(resp.reason)
+            }
+        },"json");
+    }
+    var data = [
+        {
+            id: 1,
+            flag: 'http://webchat.baymy.cn/qa_platform/views/ask_success.html?qaId=62',
+            currencyCode: '',
+            currency: ''
+        },
+        {
+            id: 2,
+            flag: 'http://webchat.baymy.cn/qa_platform/views/home.html',
+            currencyCode: '',
+            currency: ''
+        },
+        {
+            id: 3,
+            flag: 'http://webchat.baymy.cn/public/views/public_index.html?pageId=1',
+            currencyCode: '',
+            currency: ''
+        }
+    ];
+    var container = document.getElementById('example');
+    var hot = new Handsontable(container, {
+        data: data,
+        autoColumnSize: {syncLimit: '40%'},
+        rowHeaders: false,
+        colHeaders: ['标题', '对应链接', '自定义字段', '短链接'],
+        colWidths: [160, 520, 100, 180],
+        minRows:8,
+        minSpareRows:1,
+        comments:true,
+        columns: [
+            {
+                data: 'id',
+                type: 'numeric',
+                width: 160
+            },
+            {
+                data: 'flag',
+                type: 'text'
+            },
+            {
+                data: 'currencyCode',
+                type: 'text'
+            },
+            {
+                data: 'currency',
+                type: 'text'
+            }
+        ],
+        manualRowResize: true,
+        manualColumnResize: true,
+        width: 960,
+        autoWrapRow: true,
+        className: 'width-table'
+    });
+</script>
+</body>
+</html>
