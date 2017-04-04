@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <title>渠道管理</title>
+    <!-- Bootstrap core CSS -->
+    <!--<link href="css/bootstrap.css" rel="stylesheet">-->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/handsontable/0.31.1/handsontable.full.min.css" rel="stylesheet">
+    <!--external css-->
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="lineicons/style.css">
+
+    <!-- Custom styles for this template -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style-responsive.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        div {
+            box-sizing: border-box;
+        }
+        .width-table {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+<section id="container" >
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    <header class="header black-bg">
+        <a href="index.html" class="logo"><b>渠道管理</b></a>
+    </header>
+    <!--header end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN SIDEBAR MENU
+    *********************************************************************************************************************************************************** -->
+    <!--sidebar start-->
+    <!--<aside>
+        <div id="sidebar"  class="nav-collapse ">
+            &lt;!&ndash; sidebar menu start&ndash;&gt;
+            <ul class="sidebar-menu" id="nav-accordion">
+
+                <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="60"></a></p>
+                <h5 class="centered">大当家</h5>
+
+                <li class="mt">
+                    <a class="active" href="index.html">
+                        <i class="fa fa-dashboard"></i>
+                        <span>渠道链生成</span>
+                    </a>
+                </li>
+
+                <li class="sub-menu">
+                    <a href="javascript:;" >
+                        <i class="fa fa-desktop"></i>
+                        <span>UI Elements</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a  href="general.html">General</a></li>
+                        <li><a  href="buttons.html">Buttons</a></li>
+                        <li><a  href="panels.html">Panels</a></li>
+                    </ul>
+                </li>
+            </ul>
+            &lt;!&ndash; sidebar menu end&ndash;&gt;
+        </div>
+    </aside>-->
+    <!--sidebar end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+
+            <div class="row">
+                <div class="col-lg-9 main-chart">
+                    <div class="title detail-bar">
+                        <div class="content">
+                            当前渠道:<span class="channel-name">暂无渠道</span>(<muted>vHMC:<span class="channel-vhmc">无</span> | vHMP:<span class="channel-vhmp">无</span></muted>)
+                        </div>
+                        <div class="right">
+                            <button type="button" class="btn btn-default navbar-btn url-button" onclick="makeUrl()">生成短链接</button>
+                        </div>
+                    </div>
+                    <div class="row mtbox" style="text-align: center">
+                        <div id="example" style="width: 100%;margin: 0 15px;text-align: left"></div>
+                    </div><!-- /row mt -->
+
+                </div><!-- /col-lg-9 END SECTION MIDDLE -->
+
+
+                <!-- **********************************************************************************************************************************************************
+                RIGHT SIDEBAR CONTENT
+                *********************************************************************************************************************************************************** -->
+
+                <div class="col-lg-3 ds">
+                    <!--COMPLETED ACTIONS DONUTS CHART-->
+                    <div class="title">
+                        <div class="content">
+                            有效渠道列表
+                        </div>
+                        <div class="right">
+                            <i class="fa fa-search-minus hidden-block" aria-hidden="true" onclick="toggleSearch(true)"></i>
+                            <i class="fa fa-search" aria-hidden="true" onclick="toggleSearch(false)"></i>
+                            <i class="fa fa-plus" aria-hidden="true" data-toggle="modal" data-target="#myModal"></i>
+                        </div>
+                    </div>
+                    <div id="search-div" class="search-div hidden-block">
+                        <input id="search-text" type="text" placeholder="请输入渠道名称">
+                    </div>
+                    <div id="channel_list">
+                        <% for(var i=0; i<channelList.length; i++) {%>
+                        <div class="desc" data-id="<%= channelList[i]._id %>">
+                            <div class="thumb">
+                                <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+                            </div>
+                            <i class="fa fa-trash-o delete operator" aria-hidden="true" onclick="deleteChannel('<%= channelList[i]._id %>','<%= channelList[i].channelName %>')"></i>
+
+                            <div class="details"
+                                 onclick="makeChannel('<%= channelList[i].vhmc %>','<%= channelList[i].vhmp %>','<%= channelList[i].channelName %>')">
+                                <div>
+                                    <strong><%= channelList[i].channelName %></strong>
+                                    <br/>
+                                    <muted>vHMC:<%= channelList[i].vhmc%></muted>
+                                    <br/>
+                                    <muted>vHMP:<%= channelList[i].vhmp%></muted>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                </div><!-- /col-lg-3 -->
+            </div><! --/row -->
+        </section>
+    </section>
+    <!--main content end-->
+</section>
+
+<!-- Modal -->
+<section class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">添加渠道</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="channel_form" action="/submitChannel">
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">渠道名称:</label>
+                        <input type="text" class="form-control" name="channelName" id="recipient-name">
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <label for="vhmc" class="form-control-label">vHMC:</label>
+                                <input id="vhmc" type="text" name="vhmc" class="form-control" aria-label="Text input with checkbox">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="vhmp" class="form-control-label">vHMP:</label>
+                                <input id="vhmp" name="vhmp" type="text" class="form-control"
+                                       aria-label="Text input with radio button">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="addChannel()" data-dismiss="modal">保存</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://cdn.staticfile.org/jquery/3.1.1/jquery.min.js"><\/script>')</script>
+<!--<script src="js/bootstrap.min.js"></script>-->
+<script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="//cdn.bootcss.com/handsontable/0.31.1/handsontable.full.min.js"></script>
+<script src="//cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>
+<script type="application/javascript">
+    var currentChannel = {};
+    /** 执行搜索 **/
+    function doSearch(){
+        var searchText = $('#search-text').val();
+        console.log('searchText:' + searchText);
+        $.post( "/search", {searchText:$.trim(searchText)}).done(function (resp) {
+            if (resp.code == 0) {
+                console.log(JSON.stringify(resp));
+                $('#channel_list').html(renderChannelItem(resp.channelList));
+            } else {
+                console.log('error');
+                alert(resp.reason);
+            }
+        },"json");
+    }
+    var throttled = _.throttle(doSearch, 1000);
+    $('#search-text').on('input', throttled);
+    /** 显示和隐藏搜索输入框 **/
+    function toggleSearch(flag){
+        if (flag) {
+            $(".fa-search").removeClass('hidden-block');
+            $("#search-div,.fa-search-minus").addClass('hidden-block')
+        } else {
+            $(".fa-search").addClass('hidden-block');
+            $("#search-div,.fa-search-minus").removeClass('hidden-block');
+            $("#search-div input").focus();
+        }
+    }
+
+    /** 调用后台接口生成短链接 **/
+    function makeUrl() {
+        var dataArr = hot.getData();
+        if (dataArr && dataArr.length) {
+            dataArr.forEach(function (item, index) {
+                if (!item[1]) {return;}
+                $.post( "/makeUrl", {id:item[0],url:item[1],custom:item[2],result:item[3]}).done(function (resp) {
+                    var repObj = JSON.parse(resp);
+                    hot.setDataAtCell(index,3,repObj['err_msg']||repObj['tinyurl']);
+                },"json");
+            })
+        }
+    }
+    /*
+     * url 目标url
+     * arg 需要替换的参数名称
+     * arg_val 替换后的参数的值
+     * return url 参数替换后的url
+     */
+    function changeURLArg(url,arg,arg_val){
+        var pattern=arg+'=([^&]*)';
+        var replaceText=arg+'='+arg_val;
+        var eval2 = eval;
+        if(url.match(pattern)){
+            var tmp='/('+ arg+'=)([^&]*)/gi';
+            tmp=url.replace(eval2(tmp),replaceText);
+            return tmp;
+        }else{
+            if(url.match('[\?]')){
+                return url+'&'+replaceText;
+            }else{
+                return url+'?'+replaceText;
+            }
+        }
+        return url+'\n'+arg+'\n'+arg_val;
+    }
+
+
+    /** 将渠道加到连接上 **/
+    function makeChannel(vhmc,vhmp,channelName) {
+        currentChannel = {vhmc:vhmc,vhmp:vhmp,channelName:channelName};
+        refreshChannel(currentChannel);
+        var dataArr = hot.getData();
+        var _$curr = $(event.target);
+        _$curr.parent().siblings().find('a').removeClass('link-active');
+        if (!_$curr.hasClass('link-active')) {
+            _$curr.addClass('link-active');
+        }
+        if (dataArr && dataArr.length) {
+            dataArr.forEach(function (item, index) {
+                if (!item[1]) {return;}
+                var url = changeURLArg(item[1],'vHMC',vhmc);
+                url = changeURLArg(url,'vHMP',vhmp);
+                if ((url.indexOf('ihealthcoming') >= 0 || url.indexOf('baymy') >= 0) && (url.indexOf('code=') >= 0)) {
+                    url = changeURLArg(url,'code','');
+                    url = url.replace('code=','');
+                    url = url.replace('?&','?');
+                    url = url.replace('&&','&');
+                }
+                hot.setDataAtCell(index,1,url);
+            })
+        }
+    }
+
+    /** 更新页面上的当前渠道信息 **/
+    function refreshChannel(obj){
+        $(".channel-name").html(obj.channelName);
+        $('.channel-vhmc').html(obj.vhmc);
+        $('.channel-vhmp').html(obj.vhmp);
+    }
+
+    /** 添加新的渠道到数据库 **/
+    function addChannel() {
+        let formArr = $("#channel_form").serializeArray();
+        $.post( "/submitChannel", formArr).done(function (resp) {
+            if (resp.code == 0) {
+                $('#channel_list').prepend(renderChannelItem([resp.data]));
+            } else {
+                alert(resp.reason)
+            }
+        },"json");
+    }
+
+    /** 渲染单个渠道项目 **/
+    function renderChannelItem(itemArr){
+        if (!itemArr) return;
+        var _mapArr = itemArr.map(function (item) {
+            return '<div class="desc" data-id="' + item._id + '"><i class="fa fa-trash-o delete operator" aria-hidden="true" onclick="deleteChannel(\'' + item._id + '\',\'' + item.channelName + '\')"></i> <div class="thumb"><span class="badge bg-theme"><i class="fa fa-clock-o"></i></span></div><div class="details" onclick="makeChannel(\'' + item.vhmc + '\',\''+ item.vhmp + '\',\''+ item.channelName + '\')"><div><strong>' + item.channelName + '</strong><br/><muted>vHMC:' + item.vhmc + '</muted><br/><muted>vHMP:' + item.vhmp + '</muted></div></div></div>'
+        });
+        return _mapArr.join('');
+    }
+    var data = [
+        {
+            id: 1,
+            flag: 'http://webchat.baymy.cn/qa_platform/views/ask_success.html?qaId=62',
+            currencyCode: '',
+            currency: ''
+        },
+        {
+            id: 2,
+            flag: 'http://webchat.baymy.cn/qa_platform/views/home.html',
+            currencyCode: '',
+            currency: ''
+        },
+        {
+            id: 3,
+            flag: 'http://webchat.baymy.cn/public/views/public_index.html?pageId=1',
+            currencyCode: '',
+            currency: ''
+        }
+    ];
+    var container = document.getElementById('example');
+    var conwidth = $('.main-chart').width()-30;
+    var hot = new Handsontable(container, {
+        data: data,
+        rowHeaders: false,
+        colHeaders: ['标题', '对应链接', '自定义字段', '短链接'],
+        colWidths: [parseInt(conwidth/8), parseInt((conwidth/7)*4),parseInt(conwidth/7),parseInt(conwidth/7)],
+        minRows:8,
+        minSpareRows:1,
+        comments:true,
+        columns: [
+            {
+                data: 'id',
+                type: 'numeric',
+                width: 160
+            },
+            {
+                data: 'flag',
+                type: 'text'
+            },
+            {
+                data: 'currencyCode',
+                type: 'text'
+            },
+            {
+                data: 'currency',
+                type: 'text'
+            }
+        ],
+        manualRowResize: true,
+        manualColumnResize: true,
+        width: conwidth,
+        autoWrapRow: true,
+        className: 'width-table'
+    });
+
+    /** 删除渠道 **/
+    function deleteChannel(id,channelName) {
+        var config = confirm("确定要删除'" + channelName + "'渠道吗？");
+        if (config){
+            $.ajax({
+                type: 'DELETE',
+                url: '/channel/' + id,
+                dataType:'json',
+                success: function(data){
+                    if (data.code == 0) {
+                        $(".desc[data-id='" + id + "']").remove();
+                    } else {
+                        alert(data.reason);
+                    }
+                },
+                error:function (error) {
+                    alert(error);
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>
