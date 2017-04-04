@@ -16,7 +16,7 @@ module.exports = function (app) {
                 console.log('error');
                 throw err;
             }
-            res.render('index2',{channelList:data});
+            res.render('channel_index',{channelList:data});
             console.log(data);
         });
     });
