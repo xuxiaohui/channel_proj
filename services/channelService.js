@@ -7,18 +7,28 @@ let channelService = {
     save(channel) {
         return new Promise((resolve, reject) => {
             let {vhmc,vhmp} = channel;
+            let {channelName} = channel;
             if (vhmc && vhmp) {
                 this.find({vhmc,vhmp}).then(list => {
                     if (list.length > 0) {
-                        reject('重复插入')
+                        reject(`vHMC:${vhmc};vHMP:${vhmp}已经被使用过了，请选择其他值`);
                     } else {
-                        Channel(channel).save((err, data) => {
-                            if (err) {
-                                reject(err)
-                                return;
+                        this.find({channelName}).then(list => {
+                            if (list.length > 0) {
+                                reject(`'${channelName}'已经被使用过了，请选择其他名字`);
+                            } else {
+                                Channel(channel).save((err, data) => {
+                                    if (err) {
+                                        reject(err)
+                                        return;
+                                    }
+                                    resolve(data)
+                                })
                             }
-                            resolve(data)
+                        },errorCode => {
+                            reject(errorCode)
                         })
+
                     }
                 }, error=>{})
             }
