@@ -188,8 +188,8 @@ var conwidth = $('.main-chart').width()-30;
 var hot = new Handsontable(container, {
     data: data,
     rowHeaders: false,
-    colHeaders: ['标题', '对应链接', '自定义字段', '短链接'],
-    colWidths: [parseInt(conwidth/8), parseInt((conwidth/7)*4),parseInt(conwidth/7),parseInt(conwidth/7)],
+    colHeaders: ['标题', '对应链接', '自定义', '短链接'],
+    colWidths: [parseInt(conwidth/8), parseInt((conwidth/7)*4),parseInt(conwidth/14),parseInt(conwidth*3/14)],
     minRows:2,
     minSpareRows:1,
     comments:true,
