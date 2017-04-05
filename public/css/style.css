@@ -830,10 +830,44 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 .search-div {
     box-sizing: border-box;
     font-size: 16px;
-    padding: 10px 0px;
+    padding: 10px;
     line-height: 20px;
     border-bottom: 1px solid #dddcdc;
+    background-color: #424a5d;
 }
+.form-group .file-input {
+    width:75px;
+    height:75px;
+    margin-left: 15px;
+    background: url('http://webchat.ihealthcoming.com/assets/images/qa_platform/add_image.png') center center no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.form-group .clear-img-btn {
+    border:1px solid #666666;
+    padding:2px 5px;
+    border-radius: 2px;
+    cursor: pointer;
+    display: none;
+}
+
+.form-group .file-input .upload-logo,.form-group .file-input .preview-img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    top:0;
+    left: 0;
+    cursor: pointer;
+}
+
+.form-group .file-input input[type='text']{
+    display: none;
+}
+
 .hidden-block {
     display: none;
 }

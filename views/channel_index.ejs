@@ -29,6 +29,64 @@
         .width-table {
             width: 100%;
         }
+        .logo-img {
+            height: 20px;
+            width: 20px;
+            border-radius: 100%;
+        }
+        .thumbnail .ewm-image {
+            width: 200px;
+            height: 200px;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #eaeaea;
+        }
+        .button-group {
+            margin: 10px auto;
+            text-align: center;
+        }
+        .qiniu-btn {
+            color: #1B8AFA;
+            border:1px solid #1B8AFA;
+        }
+        .qiniu-btn:hover {
+            color: #1B8AFA;
+            border:1px solid #1B8AFA;
+        }
+        .highlight {
+            padding: 9px 14px;
+            margin-bottom: 14px;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+            border-radius: 4px;
+            position: relative;
+        }
+        .highlight .btn-clipboard {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 10;
+            display: block;
+            padding: 5px 8px;
+            font-size: 12px;
+            color: #767676;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #e1e1e8;
+            border-radius: 0 4px 0 4px;
+        }
+        .language-html {
+            word-break: break-all;
+        }
+        .ewm-channel {
+            color: #c7254e;
+        }
+        .ds .checked {
+            background: lightgoldenrodyellow;
+        }
+        .ds .checked:hover {
+            background: lightgoldenrodyellow;
+        }
     </style>
 </head>
 
@@ -91,7 +149,7 @@
                 <div class="col-lg-9 main-chart">
                     <div class="title detail-bar">
                         <div class="content">
-                            当前渠道:<span class="channel-name">暂无渠道</span>(<muted>vHMC:<span class="channel-vhmc">无</span> | vHMP:<span class="channel-vhmp">无</span></muted>)
+                            当前选择:<span class="channel-name">暂无渠道</span>(<muted>vHMC:<span class="channel-vhmc">无</span> | vHMP:<span class="channel-vhmp">无</span></muted>)
                         </div>
                         <div class="right">
                             <button type="button" class="btn btn-default navbar-btn url-button" onclick="makeUrl()">生成短链接</button>
@@ -101,13 +159,73 @@
                         <div id="example" style="width: 100%;margin: 0 15px;text-align: left"></div>
                     </div><!-- /row mt -->
 
+
+                    <div class="title detail-bar">
+                        <div class="content">
+                            二维码(需要在上面选择一行记录！)
+                        </div>
+                        <div class="right">
+                            <button type="button" class="btn btn-default navbar-btn url-button" onclick="makeEWM()">生成二维码</button>
+                        </div>
+                    </div>
+                    <div class="row mtbox">
+                        <div class="col-sm-6 col-md-6">
+                            <div class="thumbnail">
+                                <h3 style="text-align: center">长链接</h3>
+                                <div id="longEwm" class="ewm-image"></div>
+                                <div class="button-group">
+                                    <div href="#" class="btn btn-default btn-sm qiniu-btn" role="button" onclick="uploadStreamToQiNiu('long')"><i class="fa fa-cloud-upload" aria-hidden="true"></i>上传到七牛</div>
+                                    <div href="#" class="btn btn-default btn-sm" role="button" onclick="downloadEWM('long')"><i class="fa fa-download" aria-hidden="true"></i>下载到本地</div>
+                                </div>
+                                <div class="caption">
+                                    <figure class="highlight">
+                                        <p>当前链接：<span class="current-title"></span></p>
+                                        <code id="long-org-address" class="language-html" data-lang="html">
+                                        </code>
+                                        <p style="margin-top: 10px">当前渠道：</p>
+                                        <div class="language-html ewm-channel" data-lang="html" class="long-qiniu-address">
+                                        </div>
+                                    </figure>
+                                    <figure class="highlight">
+                                        <div class="zero-clipboard"><span class="btn-clipboard btn-clipboard-hover" data-clipboard-target="#long-qiniuurl">Copy</span></div>
+                                        <p>长链接二维码七牛地址：</p>
+                                        <code id="long-qiniuurl" class="language-html" data-lang="html" class="long-qiniu-address">
+                                        </code>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-6 col-md-6">
+                            <div class="thumbnail">
+                                <h3 style="text-align: center">短链接</h3>
+                                <div id="shortEwm" class="ewm-image"></div>
+                                <div class="button-group">
+                                    <div href="#" class="btn btn-default btn-sm qiniu-btn" role="button" onclick="uploadStreamToQiNiu('short')"><i class="fa fa-cloud-upload" aria-hidden="true"></i>上传到七牛</div>
+                                    <div href="#" class="btn btn-default btn-sms" role="button" onclick="downloadEWM('short')"><i class="fa fa-download" aria-hidden="true"></i>下载到本地</div>
+                                </div>
+                                <div class="caption">
+                                    <figure class="highlight">
+                                        <p>当前链接：<span class="current-title"></span></p>
+                                        <code class="language-html" data-lang="html" id="short-org-address">
+                                        </code>
+                                        <p style="margin-top: 10px">当前渠道：</p>
+                                        <div class="language-html ewm-channel" data-lang="html" class="short-qiniu-address">
+                                        </div>
+                                    </figure>
+                                    <figure class="highlight">
+                                        <div class="zero-clipboard"><span class="btn-clipboard btn-clipboard-hover" data-clipboard-target="#short-qiniuurl">Copy</span></div>
+                                        <p>短链接二维码七牛地址：</p>
+                                        <code id="short-qiniuurl" class="language-html" data-lang="html" class="short-qiniu-address">
+                                        </code>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div><!-- /col-lg-9 END SECTION MIDDLE -->
-
-
-                <!-- **********************************************************************************************************************************************************
-                RIGHT SIDEBAR CONTENT
-                *********************************************************************************************************************************************************** -->
-
                 <div class="col-lg-3 ds">
                     <!--COMPLETED ACTIONS DONUTS CHART-->
                     <div class="title">
@@ -127,7 +245,13 @@
                         <% for(var i=0; i<channelList.length; i++) {%>
                         <div class="desc" data-id="<%= channelList[i]._id %>">
                             <div class="thumb">
-                                <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+                                <% if (channelList[i].logoUrl) { %>
+                                <img src="<%= channelList[i].logoUrl %>" class="logo-img" alt="">
+                                <% } else { %>
+                                <span class="badge bg-theme">
+                                        <i class="fa fa-clock-o"></i>
+                                    </span>
+                                <% } %>
                             </div>
                             <i class="fa fa-trash-o delete operator" aria-hidden="true" onclick="deleteChannel('<%= channelList[i]._id %>','<%= channelList[i].channelName %>')"></i>
 
@@ -180,6 +304,16 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="file-input">
+                                <img id="logo_preview_img" src="" class="preview-img" alt="">
+                                <input type="file" name="uploadLogo" class="upload-logo" onchange="imageChange()">
+                                <input id="logoUrl" type="text" name="logoUrl" value=""/>
+                            </div>
+                            <span> 请输入渠道logo </span> <span id="clearImg" class="clear-img-btn" onclick="clearImg()">清除</span>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -197,202 +331,111 @@
 <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="//cdn.bootcss.com/handsontable/0.31.1/handsontable.full.min.js"></script>
 <script src="//cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="http://files.cnblogs.com/files/pfbk/utf.js"></script>
+<!--<script type="text/javascript" src="http://files.cnblogs.com/files/pfbk/jquery.qrcode.js"></script>-->
+<script type="text/javascript" src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.6.1/clipboard.min.js"></script>
+<script src="scripts/qiniu_upload.js"></script>
+<script src="scripts/channel_manager.js"></script>
 <script type="application/javascript">
     var currentChannel = {};
-    /** 执行搜索 **/
-    function doSearch(){
-        var searchText = $('#search-text').val();
-        console.log('searchText:' + searchText);
-        $.post( "/search", {searchText:$.trim(searchText)}).done(function (resp) {
-            if (resp.code == 0) {
-                console.log(JSON.stringify(resp));
-                $('#channel_list').html(renderChannelItem(resp.channelList));
-            } else {
-                console.log('error');
-                alert(resp.reason);
-            }
-        },"json");
-    }
-    var throttled = _.throttle(doSearch, 1000);
-    $('#search-text').on('input', throttled);
-    /** 显示和隐藏搜索输入框 **/
-    function toggleSearch(flag){
-        if (flag) {
-            $(".fa-search").removeClass('hidden-block');
-            $("#search-div,.fa-search-minus").addClass('hidden-block')
-        } else {
-            $(".fa-search").addClass('hidden-block');
-            $("#search-div,.fa-search-minus").removeClass('hidden-block');
-            $("#search-div input").focus();
-        }
+    var handsontableSelectRow = null;
+    var qiniuUploadUrl = 'http://up-z0.qiniu.com/putb64/-1';
+    var qiniuReadUrl = 'http://file.ihealthcoming.com/'
+
+    /** 生成二维码的 **/
+    function creatqr(jqObj,url, logoUrl) {
+        jqObj.html("");
+        url && jqObj.qrcode({ width: 200, height: 200, text: url,top:10,left:10});
     }
 
-    /** 调用后台接口生成短链接 **/
-    function makeUrl() {
-        var dataArr = hot.getData();
-        if (dataArr && dataArr.length) {
-            dataArr.forEach(function (item, index) {
-                if (!item[1]) {return;}
-                $.post( "/makeUrl", {id:item[0],url:item[1],custom:item[2],result:item[3]}).done(function (resp) {
-                    var repObj = JSON.parse(resp);
-                    hot.setDataAtCell(index,3,repObj['err_msg']||repObj['tinyurl']);
-                },"json");
-            })
+    /** 下载二维码 **/
+    function exportCanvasAsPNG(canvas, fileName) {
+        var MIME_TYPE = "image/png";
+        var dlLink = document.createElement('a');
+        dlLink.download = fileName;
+        dlLink.href = canvas.toDataURL("image/png");
+        dlLink.dataset.downloadurl = [MIME_TYPE, dlLink.href].join(':');
+        document.body.appendChild(dlLink);
+        dlLink.click();
+        document.body.removeChild(dlLink);
+    }
+    function downloadEWM(str){
+        if (str == 'short') {
+            exportCanvasAsPNG($('#shortEwm').find("canvas")[0],'短链接_' +$('.ewm-channel').html()+ '_' + $('.current-title').html() +'.png');
+        }
+        if (str == 'long') {
+            exportCanvasAsPNG($('#longEwm').find("canvas")[0],'长链接_' +$('.ewm-channel').html()+ '_' + $('.current-title').html() +'.png');
         }
     }
-    /*
-     * url 目标url
-     * arg 需要替换的参数名称
-     * arg_val 替换后的参数的值
-     * return url 参数替换后的url
-     */
-    function changeURLArg(url,arg,arg_val){
-        var pattern=arg+'=([^&]*)';
-        var replaceText=arg+'='+arg_val;
-        var eval2 = eval;
-        if(url.match(pattern)){
-            var tmp='/('+ arg+'=)([^&]*)/gi';
-            tmp=url.replace(eval2(tmp),replaceText);
-            return tmp;
-        }else{
-            if(url.match('[\?]')){
-                return url+'&'+replaceText;
-            }else{
-                return url+'?'+replaceText;
-            }
+    function uploadStreamToQiNiu(str){
+        var imageDataStr = null;
+        if (str == 'short') {
+            imageDataStr = $('#shortEwm').find("canvas")[0].toDataURL("image/png");
         }
-        return url+'\n'+arg+'\n'+arg_val;
-    }
-
-
-    /** 将渠道加到连接上 **/
-    function makeChannel(vhmc,vhmp,channelName) {
-        currentChannel = {vhmc:vhmc,vhmp:vhmp,channelName:channelName};
-        refreshChannel(currentChannel);
-        var dataArr = hot.getData();
-        var _$curr = $(event.target);
-        _$curr.parent().siblings().find('a').removeClass('link-active');
-        if (!_$curr.hasClass('link-active')) {
-            _$curr.addClass('link-active');
+        if (str == 'long') {
+            imageDataStr = $('#longEwm').find("canvas")[0].toDataURL("image/png");
         }
-        if (dataArr && dataArr.length) {
-            dataArr.forEach(function (item, index) {
-                if (!item[1]) {return;}
-                var url = changeURLArg(item[1],'vHMC',vhmc);
-                url = changeURLArg(url,'vHMP',vhmp);
-                if ((url.indexOf('ihealthcoming') >= 0 || url.indexOf('baymy') >= 0) && (url.indexOf('code=') >= 0)) {
-                    url = changeURLArg(url,'code','');
-                    url = url.replace('code=','');
-                    url = url.replace('?&','?');
-                    url = url.replace('&&','&');
+        if(!imageDataStr)return;
+        uploadToken().then(resp => {
+            var uptoken = resp.data.uptoken;
+            var url = "http://up-z0.qiniu.com/putb64/-1"; //非华东空间需要根据注意事项 1 修改上传域名
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange=function(){
+                if (xhr.readyState==4){
+                    $('#' + str + '-qiniuurl').html(qiniuReadUrl + JSON.parse(xhr.responseText).key);
                 }
-                hot.setDataAtCell(index,1,url);
-            })
-        }
-    }
-
-    /** 更新页面上的当前渠道信息 **/
-    function refreshChannel(obj){
-        $(".channel-name").html(obj.channelName);
-        $('.channel-vhmc').html(obj.vhmc);
-        $('.channel-vhmp').html(obj.vhmp);
-    }
-
-    /** 添加新的渠道到数据库 **/
-    function addChannel() {
-        let formArr = $("#channel_form").serializeArray();
-        $.post( "/submitChannel", formArr).done(function (resp) {
-            if (resp.code == 0) {
-                $('#channel_list').prepend(renderChannelItem([resp.data]));
-            } else {
-                alert(resp.reason)
             }
-        },"json");
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/octet-stream");
+            xhr.setRequestHeader("Authorization", "UpToken " + uptoken);
+            xhr.send(imageDataStr.substring(imageDataStr.indexOf(',')+1));
+        },error=>{});
+    }
+    function makeEWM() {
+        checkData();
+        if (handsontableSelectRow == null) {
+            alert('请选择一行记录！');
+            return;
+        }
+        cleanEWM();
+        $('#long-org-address').html(hot.getDataAtCell(handsontableSelectRow,1));
+        $('#short-org-address').html(hot.getDataAtCell(handsontableSelectRow,3));
+        $('.current-title').html(hot.getDataAtCell(handsontableSelectRow,0));
+        $('.ewm-channel').html((currentChannel.channelName||'无渠道') + '(vHMC:' + (currentChannel.vhmc||'无')  + ' | vHMP:' + (currentChannel.vhmp||'无') + ')')
+        /** 同时生成短链接和长链接 **/
+        creatqr($('#shortEwm'),hot.getDataAtCell(handsontableSelectRow,3));
+        creatqr($('#longEwm'),hot.getDataAtCell(handsontableSelectRow,1));
+        handsontableSelectRow = null;
+    }
+    function cleanEWM(){
+        $('#shortEwm').html('');
+        $('#longEwm').html('');
+        $('#short-qiniuurl').html('');
+        $('#long-qiniuurl').html('');
+        $('#long-org-address').html('');
+        $('#short-org-address').html('');
+        $('.current-title').html('');
+        $('.ewm-channel').html();
     }
 
-    /** 渲染单个渠道项目 **/
-    function renderChannelItem(itemArr){
-        if (!itemArr) return;
-        var _mapArr = itemArr.map(function (item) {
-            return '<div class="desc" data-id="' + item._id + '"><i class="fa fa-trash-o delete operator" aria-hidden="true" onclick="deleteChannel(\'' + item._id + '\',\'' + item.channelName + '\')"></i> <div class="thumb"><span class="badge bg-theme"><i class="fa fa-clock-o"></i></span></div><div class="details" onclick="makeChannel(\'' + item.vhmc + '\',\''+ item.vhmp + '\',\''+ item.channelName + '\')"><div><strong>' + item.channelName + '</strong><br/><muted>vHMC:' + item.vhmc + '</muted><br/><muted>vHMP:' + item.vhmp + '</muted></div></div></div>'
+    $( document ).ready(function() {
+        var clipboard = new Clipboard('.btn-clipboard');
+        clipboard.on('success', function(e) {
+            console.log("复制成功")
         });
-        return _mapArr.join('');
-    }
-    var data = [
-        {
-            id: 1,
-            flag: 'http://webchat.baymy.cn/qa_platform/views/ask_success.html?qaId=62',
-            currencyCode: '',
-            currency: ''
-        },
-        {
-            id: 2,
-            flag: 'http://webchat.baymy.cn/qa_platform/views/home.html',
-            currencyCode: '',
-            currency: ''
-        },
-        {
-            id: 3,
-            flag: 'http://webchat.baymy.cn/public/views/public_index.html?pageId=1',
-            currencyCode: '',
-            currency: ''
-        }
-    ];
-    var container = document.getElementById('example');
-    var conwidth = $('.main-chart').width()-30;
-    var hot = new Handsontable(container, {
-        data: data,
-        rowHeaders: false,
-        colHeaders: ['标题', '对应链接', '自定义字段', '短链接'],
-        colWidths: [parseInt(conwidth/8), parseInt((conwidth/7)*4),parseInt(conwidth/7),parseInt(conwidth/7)],
-        minRows:8,
-        minSpareRows:1,
-        comments:true,
-        columns: [
-            {
-                data: 'id',
-                type: 'numeric',
-                width: 160
-            },
-            {
-                data: 'flag',
-                type: 'text'
-            },
-            {
-                data: 'currencyCode',
-                type: 'text'
-            },
-            {
-                data: 'currency',
-                type: 'text'
-            }
-        ],
-        manualRowResize: true,
-        manualColumnResize: true,
-        width: conwidth,
-        autoWrapRow: true,
-        className: 'width-table'
     });
 
-    /** 删除渠道 **/
-    function deleteChannel(id,channelName) {
-        var config = confirm("确定要删除'" + channelName + "'渠道吗？");
-        if (config){
-            $.ajax({
-                type: 'DELETE',
-                url: '/channel/' + id,
-                dataType:'json',
-                success: function(data){
-                    if (data.code == 0) {
-                        $(".desc[data-id='" + id + "']").remove();
-                    } else {
-                        alert(data.reason);
-                    }
-                },
-                error:function (error) {
-                    alert(error);
-                }
+    //检查一下是不是只有一行有效记录
+    function checkData(){
+        var datas = hot.getData();
+        if (datas && datas.length) {
+            var _arr = datas.filter(function(item){
+                return item[0]||item[1]||item[2]||item[3];
             });
+            if (_arr.length == 1) {
+                handsontableSelectRow = 0
+            }
         }
     }
 </script>
