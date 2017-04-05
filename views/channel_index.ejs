@@ -87,6 +87,22 @@
         .ds .checked:hover {
             background: lightgoldenrodyellow;
         }
+        .notice-wrap {
+            height: 50px;
+            margin: 20px auto;
+        }
+        .text-notice {
+            display: inline-block;
+            height: 26px;
+            background: rgba(0,0,0,0.6);
+            color: #ffffff;
+            margin: 0 auto;
+            line-height: 26px;
+            padding:0px 10px;
+            border-radius: 5px;
+            display: none;
+            width: 100px;
+        }
     </style>
 </head>
 
@@ -157,6 +173,9 @@
                     </div>
                     <div class="row mtbox" style="text-align: center">
                         <div id="example" style="width: 100%;margin: 0 15px;text-align: left"></div>
+                        <div class="notice-wrap">
+                            <div class="text-notice"><i class="fa fa-smile-o" aria-hidden="true"></i> 复制成功</div>
+                        </div>
                     </div><!-- /row mt -->
 
 
@@ -324,6 +343,8 @@
     </div>
 </section>
 
+<div class="text-notice"></div>
+
 <!-- js placed at the end of the document so the pages load faster -->
 <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="https://cdn.staticfile.org/jquery/3.1.1/jquery.min.js"><\/script>')</script>
@@ -426,6 +447,19 @@
         clipboard.on('success', function(e) {
             console.log("复制成功")
         });
+        var $textNode = $('.text-notice');
+        var clipbord2 = new Clipboard('.width-table',{
+            text:function (trigger) {
+                return trigger.innerText;
+            }
+        });
+        clipbord2.on('success', function(e) {
+            $textNode.fadeIn();
+            setTimeout(function () {
+               $textNode.fadeOut();
+            },500);
+        });
+
     });
 
     //检查一下是不是只有一行有效记录
