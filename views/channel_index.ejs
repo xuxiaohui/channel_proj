@@ -393,7 +393,9 @@
         },error=>{});
     }
     function makeEWM() {
-        checkData();
+        if(!checkData()){
+            return;
+        }
         if (handsontableSelectRow == null) {
             alert('请选择一行记录！');
             return;
@@ -436,7 +438,11 @@
             if (_arr.length == 1) {
                 handsontableSelectRow = 0
             }
+            if(_arr.length == 0) {
+                return false;
+            }
         }
+        return true;
     }
 </script>
 </body>
