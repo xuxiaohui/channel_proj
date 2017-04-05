@@ -311,7 +311,7 @@
                                 <input type="file" name="uploadLogo" class="upload-logo" onchange="imageChange()">
                                 <input id="logoUrl" type="text" name="logoUrl" value=""/>
                             </div>
-                            <span> 请输入渠道logo </span> <span id="clearImg" class="clear-img-btn" onclick="clearImg()">清除</span>
+                            <span> 渠道logo </span> <span id="clearImg" class="clear-img-btn" onclick="clearImg()">清除</span>
                         </div>
                     </div>
                 </form>
@@ -346,7 +346,7 @@
     /** 生成二维码的 **/
     function creatqr(jqObj,url, logoUrl) {
         jqObj.html("");
-        url && jqObj.qrcode({ width: 200, height: 200, text: url,top:10,left:10});
+        url && jqObj.qrcode({ width: 200, height: 200, text: url, top:10, left:10});
     }
 
     /** 下载二维码 **/
