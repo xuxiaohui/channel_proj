@@ -182,6 +182,7 @@ var data = [
         currency: ''
     }
 ];
+data = [];
 var container = document.getElementById('example');
 var conwidth = $('.main-chart').width()-30;
 var hot = new Handsontable(container, {
@@ -189,7 +190,7 @@ var hot = new Handsontable(container, {
     rowHeaders: false,
     colHeaders: ['标题', '对应链接', '自定义字段', '短链接'],
     colWidths: [parseInt(conwidth/8), parseInt((conwidth/7)*4),parseInt(conwidth/7),parseInt(conwidth/7)],
-    minRows:3,
+    minRows:2,
     minSpareRows:1,
     comments:true,
     columns: [

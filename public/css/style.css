@@ -766,6 +766,7 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 .ds {
 	background: #ffffff;
 	padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .ds h4 {
