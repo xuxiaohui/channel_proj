@@ -24,13 +24,19 @@ var upload = multer({  storage: storage });
 
 module.exports = function (app) {
     app.get('/index', (req, res) => {
-        Channel.find({}, (err, data) => {
+        Channel.find({}, (err, list) => {
             if (err) {
                 console.log('error');
                 throw err;
             }
-            res.render('channel_index',{channelList:data});
-            console.log(data);
+            list = list.map(item => {
+                if (!item.logoUrl) {
+                    item.logoUrl = 'public/uploads/default_ewm_icon108.png';
+                }
+                return item;
+            })
+            res.render('channel_index',{channelList:list});
+            console.log(list);
         });
     });
 

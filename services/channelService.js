@@ -41,6 +41,13 @@ let channelService = {
                     reject(err);
                     return;
                 }
+                list = list.map(item => {
+                    if (!item.logoUrl) {
+                        item.logoUrl = 'public/uploads/default_ewm_icon108.png';
+                    }
+                    return item;
+                })
+                console.log(list);
                 resolve(list);
             })
         })
@@ -52,6 +59,13 @@ let channelService = {
         });
         return new Promise((resolve, reject) => {
             this.find(query).then(list => {
+                list = list.map(item => {
+                    if (!item.logoUrl) {
+                        item.logoUrl = 'public/uploads/default_ewm_icon108.png';
+                    }
+                    return item;
+                })
+                console.log(list);
                 resolve(list);
             },error => {
                 reject(error);
