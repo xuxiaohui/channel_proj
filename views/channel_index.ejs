@@ -11,12 +11,12 @@
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/handsontable/0.31.1/handsontable.full.min.css" rel="stylesheet">
     <!--external css-->
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="lineicons/style.css">
+    <link href="public/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="public/lineicons/style.css">
 
     <!-- Custom styles for this template -->
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/style-responsive.css" rel="stylesheet">
+    <link href="public/css/style.css" rel="stylesheet">
+    <link href="public/css/style-responsive.css" rel="stylesheet">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -274,7 +274,7 @@
                             <i class="fa fa-trash-o delete operator" aria-hidden="true" onclick="deleteChannel('<%= channelList[i]._id %>','<%= channelList[i].channelName %>')"></i>
 
                             <div class="details"
-                                 onclick="makeChannel('<%= channelList[i].vhmc %>','<%= channelList[i].vhmp %>','<%= channelList[i].channelName %>')">
+                                 onclick="makeChannel('<%= channelList[i].vhmc %>','<%= channelList[i].vhmp %>','<%= channelList[i].channelName %>','<%= channelList[i].logoUrl %>')">
                                 <div>
                                     <strong><%= channelList[i].channelName %></strong>
                                     <br/>
@@ -355,8 +355,8 @@
 <!--<script type="text/javascript" src="http://files.cnblogs.com/files/pfbk/jquery.qrcode.js"></script>-->
 <script type="text/javascript" src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.6.1/clipboard.min.js"></script>
-<script src="scripts/qiniu_upload.js"></script>
-<script src="scripts/channel_manager.js"></script>
+<script src="public/scripts/qiniu_upload.js"></script>
+<script src="public/scripts/channel_manager.js"></script>
 <script type="application/javascript">
     var currentChannel = {};
     var handsontableSelectRow = null;
@@ -367,6 +367,22 @@
     function creatqr(jqObj,url, logoUrl) {
         jqObj.html("");
         url && jqObj.qrcode({ width: 200, height: 200, text: url, top:10, left:10});
+        console.log(jqObj.find("canvas")[0]);
+        var canvas = jqObj.find("canvas")[0];
+        if (canvas&&logoUrl) {
+            var ctx = canvas.getContext('2d');
+            var img = new Image();
+            img.onload = function(){
+                //边框线条宽度
+                ctx.lineWidth = 4;
+                //边框线条颜色
+                ctx.strokeStyle = "#fff";
+                ctx.lineJoin = 'round';	//端点的样式-圆角
+                ctx.strokeRect((canvas.height-48)/2,(canvas.height-48)/2,49,49);
+                ctx.drawImage(img,(canvas.height-45)/2,(canvas.height-45)/2,45,45);
+            }
+            img.src = logoUrl;
+        }
     }
 
     /** 下载二维码 **/
@@ -426,8 +442,8 @@
         $('.current-title').html(hot.getDataAtCell(handsontableSelectRow,0));
         $('.ewm-channel').html((currentChannel.channelName||'无渠道') + '(vHMC:' + (currentChannel.vhmc||'无')  + ' | vHMP:' + (currentChannel.vhmp||'无') + ')')
         /** 同时生成短链接和长链接 **/
-        creatqr($('#shortEwm'),hot.getDataAtCell(handsontableSelectRow,3));
-        creatqr($('#longEwm'),hot.getDataAtCell(handsontableSelectRow,1));
+        creatqr($('#shortEwm'),hot.getDataAtCell(handsontableSelectRow,3),currentChannel.logoUrl);
+        creatqr($('#longEwm'),hot.getDataAtCell(handsontableSelectRow,1),currentChannel.logoUrl);
         handsontableSelectRow = null;
     }
     function cleanEWM(){
@@ -449,6 +465,9 @@
         var $textNode = $('.text-notice');
         var clipbord2 = new Clipboard('.width-table',{
             text:function (trigger) {
+                if (!trigger.innerText || $(trigger).parent().get(0).tagName.toLowerCase()!='tr') {
+                    return null;
+                }
                 return trigger.innerText;
             }
         });

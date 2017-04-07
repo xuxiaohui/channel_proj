@@ -84,14 +84,30 @@ function clearShortUrl(){
 function imageChange() {
     var file = $(event.target)[0].files[0];
     if (file && checkImageFileType(file)) {
-        uploadImgFile(file,function (key) {
-            if (key) {
-                $('#logo_preview_img').attr('src',qiniuReadUrl+key).css('opacity','1').show();
-                $('#logoUrl').val(qiniuReadUrl+key);
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        let formData = new FormData();
+        formData.append('file', file);
+        $.ajax({
+            url: "/uploadImageToLocal",
+            data: formData,
+            dataType: 'json',
+            type: 'post',
+            processData: false,
+            contentType : false,
+            async: false,
+            timeout:6000
+        }).then(resp => {
+            if (resp.code == 0) {
+                $('#logo_preview_img').attr('src',window.location.origin + '/' + resp.data.path).css('opacity','1').show();
+                $('#logoUrl').val(resp.data.path);
                 $('#clearImg').show();
+            } else {
+                alert(resp.reason)
             }
 
-        })
+        },error => {
+        });
     } else {
         alert('请上传有效的图片文件');
     }
@@ -103,13 +119,13 @@ function clearImg() {
 }
 
 /** 将渠道加到连接上 **/
-function makeChannel(vhmc,vhmp,channelName) {
+function makeChannel(vhmc,vhmp,channelName,logoUrl) {
     clearShortUrl();
     if(!$(event.target).parents('.desc').hasClass('checked')) {
         $(event.target).parents('.desc').addClass('checked');
     }
     $(event.target).parents('.desc').siblings().removeClass('checked');
-    currentChannel = {vhmc:vhmc,vhmp:vhmp,channelName:channelName};
+    currentChannel = {vhmc:vhmc,vhmp:vhmp,channelName:channelName,logoUrl:logoUrl};
     refreshChannel(currentChannel);
     var dataArr = hot.getData();
     var _$curr = $(event.target);
@@ -158,7 +174,7 @@ function renderChannelItem(itemArr){
     var logoTem = '';
     var _mapArr = itemArr.map(function (item) {
         logoTem = item.logoUrl?'<img src="' + item.logoUrl + '" class="logo-img" alt="">':' <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>';
-        return '<div class="desc" data-id="' + item._id + '"><i class="fa fa-trash-o delete operator" aria-hidden="true" onclick="deleteChannel(\'' + item._id + '\',\'' + item.channelName + '\')"></i> <div class="thumb">' + logoTem + '</div><div class="details" onclick="makeChannel(\'' + item.vhmc + '\',\''+ item.vhmp + '\',\''+ item.channelName + '\')"><div><strong>' + item.channelName + '</strong><br/><muted>vHMC:' + item.vhmc + '</muted><br/><muted>vHMP:' + item.vhmp + '</muted></div></div></div>'
+        return '<div class="desc" data-id="' + item._id + '"><i class="fa fa-trash-o delete operator" aria-hidden="true" onclick="deleteChannel(\'' + item._id + '\',\'' + item.channelName + '\')"></i> <div class="thumb">' + logoTem + '</div><div class="details" onclick="makeChannel(\'' + item.vhmc + '\',\''+ item.vhmp + '\',\''+ item.channelName + '\',\''+ item.logoUrl + '\')"><div><strong>' + item.channelName + '</strong><br/><muted>vHMC:' + item.vhmc + '</muted><br/><muted>vHMP:' + item.vhmp + '</muted></div></div></div>'
     });
     return _mapArr.join('');
 }

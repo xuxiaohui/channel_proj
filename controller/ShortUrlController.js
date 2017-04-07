@@ -3,11 +3,24 @@
  */
 let bodyParser = require('body-parser');
 let jsonParser = bodyParser.json();
+var multer  = require('multer');
 // create application/x-www-form-urlencoded parser
 let urlencodedParser = bodyParser.urlencoded({ extended: false });
 let request = require('request');
 let Channel = require('../dao/schema/Channel');
 let channelService = require('../services/channelService');
+var storage = multer.diskStorage({
+    //设置上传后文件路径，uploads文件夹会自动创建。
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads')
+    },
+    //给上传文件重命名，获取添加后缀名
+    filename: function (req, file, cb) {
+        var fileFormat = (file.originalname).split(".");
+        cb(null, file.fieldname + '-' + Date.now() + "." + fileFormat[fileFormat.length - 1]);
+    }
+});
+var upload = multer({  storage: storage });
 
 module.exports = function (app) {
     app.get('/index', (req, res) => {
@@ -62,4 +75,12 @@ module.exports = function (app) {
         }
         console.log(requestArr);
     });
+
+    app.post('/uploadImageToLocal',upload.single('file'),(req, resp) => {
+        console.log(req.file.path);
+        let data = {
+            path:req.file.path
+        }
+        resp.json({code:0,data});
+    })
 };
