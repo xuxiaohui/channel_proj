@@ -118,6 +118,16 @@ function clearImg() {
     $('#clearImg').hide();
 }
 
+function channelFilter(obj){
+    if (obj.vhmp && obj.vhmp.indexOf('日期') >= 0) {
+        let _date = new Date();
+        var _month = (_date.getMonth()+1) > 9?(_date.getMonth()+1):'0' + (_date.getMonth()+1);
+        var __date = _date.getDate() > 9?_date.getDate():'0' + _date.getDate();
+        obj.vhmp = _month + __date + '';
+    }
+    return obj;
+}
+
 /** 将渠道加到连接上 **/
 function makeChannel(vhmc,vhmp,channelName,logoUrl) {
     clearShortUrl();
@@ -125,7 +135,7 @@ function makeChannel(vhmc,vhmp,channelName,logoUrl) {
         $(event.target).parents('.desc').addClass('checked');
     }
     $(event.target).parents('.desc').siblings().removeClass('checked');
-    currentChannel = {vhmc:vhmc,vhmp:vhmp,channelName:channelName,logoUrl:logoUrl};
+    currentChannel = channelFilter({vhmc:vhmc,vhmp:vhmp,channelName:channelName,logoUrl:logoUrl});
     refreshChannel(currentChannel);
     var dataArr = hot.getData();
     var _$curr = $(event.target);
@@ -136,8 +146,8 @@ function makeChannel(vhmc,vhmp,channelName,logoUrl) {
     if (dataArr && dataArr.length) {
         dataArr.forEach(function (item, index) {
             if (!item[1]) {return;}
-            var url = changeURLArg(item[1],'vHMC',vhmc);
-            url = changeURLArg(url,'vHMP',vhmp);
+            var url = changeURLArg(item[1],'vHMC',currentChannel.vhmc);
+            url = changeURLArg(url,'vHMP',currentChannel.vhmp);
             if ((url.indexOf('ihealthcoming') >= 0 || url.indexOf('baymy') >= 0) && (url.indexOf('code=') >= 0)) {
                 url = changeURLArg(url,'code','');
                 url = url.replace('code=','');
