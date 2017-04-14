@@ -1,13 +1,13 @@
 /**
  * Created by xuxiaohui on 2017/4/1.
  */
-let Promise = require('promise');
-let Channel = require('../dao/schema/Channel');
-let channelService = {
+var Promise = require('promise');
+var Channel = require('../dao/schema/Channel');
+var channelService = {
     save(channel) {
         return new Promise((resolve, reject) => {
-            let {vhmc,vhmp} = channel;
-            let {channelName} = channel;
+            var {vhmc,vhmp} = channel;
+            var {channelName} = channel;
             if (vhmc && vhmp) {
                 this.find({vhmc,vhmp}).then(list => {
                     if (list.length > 0) {
@@ -53,7 +53,7 @@ let channelService = {
         })
     },
     fuzzyQuery(params){
-        let query = {};
+        var query = {};
         Object.keys(params).forEach(item => {
             query[item] = new RegExp(params[item])
         });
