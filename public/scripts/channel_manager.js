@@ -84,9 +84,9 @@ function clearShortUrl(){
 function imageChange() {
     var file = $(event.target)[0].files[0];
     if (file && checkImageFileType(file)) {
-        let reader = new FileReader();
+        var reader = new FileReader();
         reader.readAsDataURL(file);
-        let formData = new FormData();
+        var formData = new FormData();
         formData.append('file', file);
         $.ajax({
             url: "/uploadImageToLocal",
@@ -120,7 +120,7 @@ function clearImg() {
 
 function channelFilter(obj){
     if (obj.vhmp && obj.vhmp.indexOf('日期') >= 0) {
-        let _date = new Date();
+        var _date = new Date();
         var _month = (_date.getMonth()+1) > 9?(_date.getMonth()+1):'0' + (_date.getMonth()+1);
         var __date = _date.getDate() > 9?_date.getDate():'0' + _date.getDate();
         obj.vhmp = _month + __date + '';

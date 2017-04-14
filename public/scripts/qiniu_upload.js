@@ -1,17 +1,17 @@
 /**
  * Created by xuxiaohui on 2017/4/5.
  */
-let URL = 'http://server.ihealthcoming.com/Rest/V2.42/';
+var URL = 'http://server.ihealthcoming.com/Rest/V2.42/';
 /**
  * 检查文件是否为图片
  * @param file
  */
 function checkImageFileType(file){
-    let _file = file || {};
-    let type = _file.type;
-    let img = ['jpeg', 'png', 'jpg', 'bmp', 'gif'];
-    let imgflag = false;
-    for(let i=0;i<img.length;i++){
+    var _file = file || {};
+    var type = _file.type;
+    var img = ['jpeg', 'png', 'jpg', 'bmp', 'gif'];
+    var imgflag = false;
+    for(var i=0;i<img.length;i++){
         if("image/"+img[i] == type){
             imgflag = true;
         }
@@ -68,11 +68,11 @@ function uploadToken() {
  * @param file 图片对象
  */
 function uploadImgFile(file,callback) {
-    let reader = new FileReader();
+    var reader = new FileReader();
     reader.readAsDataURL(file);
     uploadToken().then(resp => {
-        let uptoken = resp.data.uptoken;
-        let formData = new FormData();
+        var uptoken = resp.data.uptoken;
+        var formData = new FormData();
         formData.append('token', uptoken);
         formData.append('file', file);
         uploadFileToQiniu(formData).then(resp => {
