@@ -8,14 +8,22 @@ let urlencodedParser = bodyParser.urlencoded({extended: false});
 let request = require('request');
 let Capi = require('qcloudapi-sdk');
 let testUrl = 'http://file.ihealthcoming.com/WebChat/mp3/7cb6430d-5e5d-4696-94b4-d8548544c00b.mp3';
+//testUrl = 'http://test.qq.com/voice_url';
+let voiceService = require('../services/voiceService');
 
-const APPID = 1253545597;
-const SERVICETYPE = 'aai';
-const SECRETID = 'AKIDgHnAh8LYXN2jIir97wa3LSO9kDVdlN1Y';
-const SECRETKEY = 'Vq00pTvHTTJyVr60lNo4A5pNsEPROBnF';
-const BASEHOST = 'qcloud.com';
-const PATH = `/asr/v1/${APPID}`;
-const CALLBACKURL = 'http://118.89.61.82:3000/voice/recognitionCallback';
+let APPID = 1253545597;
+let SERVICETYPE = 'aai';
+let SECRETID = 'AKIDgHnAh8LYXN2jIir97wa3LSO9kDVdlN1Y';
+let SECRETKEY = 'Vq00pTvHTTJyVr60lNo4A5pNsEPROBnF';
+let BASEHOST = 'qcloud.com';
+
+/*APPID = 200001;
+ SECRETID='AKIDUfLUEUigQiXqm7CVSspKJnuaiIKtxqAv';
+ SECRETKEY='bLcPnl88WU30VY57ipRhSePfPdOfSruK';*/
+
+let PATH = `/asr/v1/${APPID}`;
+let CALLBACKURL = 'http://118.89.61.82:3000/voice/recognitionCallback';
+//CALLBACKURL = 'http://test.qq.com/rec_callback'
 
 let capi = new Capi({
     serviceType: SERVICETYPE,
@@ -28,35 +36,28 @@ let capi = new Capi({
 const PREFIX = '/voice';
 
 module.exports = function (app) {
-    app.get(`${PREFIX}/recognitionCallback`, urlencodedParser, (req, res) => {
+    app.post(`${PREFIX}/recognitionCallback`, urlencodedParser, (req, res) => {
         if (req.body) {
             let result = req.body;
-            console.log('================begin=================');
-            console.log(`code:${result.code}`);
-            console.log(`message:${result.message}`);
-            console.log(`requestId:${result.requestId}`);
-            console.log(`appid:${result.appid}`);
-            console.log(`projecteid:${result.projecteid}`);
-            console.log(`audioUrl:${result.audioUrl}`);
-            console.log(`text:${result.text}`);
-            console.log(`audioTime:${result.audioTime}`);
-            console.log('================eng=================');
+            console.log(req);
+            voiceService.save({
+                code: result.code + '',
+                message: result.message + '',//成功或者失败的文字描述
+                requestId: result.requestId + '',//请求 ID，与后台任务 ID 一一对应
+                appid: result.appid + '',//腾讯云应用 ID
+                projecteid: result.projecteid + '',//腾讯云项目 ID
+                audioUrl: result.audioUrl + '',//语音下载ur。如果语音源非公网可下载URL，则不包含该字段l
+                text: result.text + '',//识别结果
+                audioTime: result.audioTime + ''// 语音总时长
+            }).then(data => {
+                res.json({code: 0, message: '成功'});
+            }, error => {
+                res.json({code: 400, message: '储存失败'});
+            });
         }
-        res.json({code: 0, message: '成功'});
+
     }),
         app.get(`${PREFIX}/sendVoice`, (req, res) => {
-            /* let queryStr = capi.generateQueryString({
-             sub_service_type:0,
-             engine_model_type:1,
-             callback_url:CALLBACKURL,
-             res_text_format:0,
-             res_type:1,
-             source_type:0,
-             url:testUrl,
-             expired:1473752807
-             });
-             let sigureText = capi.sign(`POST${SERVICETYPE}.${BASEHOST+PATH}?${queryStr}`,SECRETKEY);
-             let finalUrl = capi.generateUrl() + '?' + queryStr;*/
             capi.request({
                 sub_service_type: 0,
                 engine_model_type: 1,
@@ -87,20 +88,28 @@ module.exports = function (app) {
             url: testUrl,
             expired: 1473752807
         });
-        let sigureText = capi.sign(`POST${SERVICETYPE}.${BASEHOST + PATH}?${queryStr}`, SECRETKEY);
+
+        let _str = `POSTaai.qcloud.com/asr/v1/1253545597?callback_url=${CALLBACKURL}&engine_model_type=1&expired=1492263495&nonce=62757&projectid=0&res_text_format=0&res_type=1&secretid=AKIDgHnAh8LYXN2jIir97wa3LSO9kDVdlN1Y&source_type=0&sub_service_type=0&timestamp=1492243495&url=${testUrl}`;
+        //_str = `POSTaai.qcloud.com/asr/v1/2000001?callback_url=${CALLBACKURL}&engine_model_type=1&expired=1473752807&nonce=44925&projectid=0&res_text_format=0&res_type=1&secretid=AKIDUfLUEUigQiXqm7CVSspKJnuaiIKtxqAv&source_type=0&sub_service_type=0&timestamp=1473752207&url=${testUrl}`;
+        let sigureText = capi.sign(_str, SECRETKEY);
         let finalUrl = capi.generateUrl() + '?' + queryStr;
+        console.log(sigureText);
+        console.log(finalUrl);
+
         let postOption = {
-            URL: finalUrl,
+            host: `${SERVICETYPE}.${BASEHOST}`,
+            path: PATH,
+            method: 'POST',
             headers: {
-                'Host': `${SERVICETYPE}.${BASEHOST + PATH}`,
+                'Host': `${SERVICETYPE}.${BASEHOST}`,
                 'Authorization': sigureText,
                 'Content-Type': 'application/octet-stream'
             }
-        }
-        var post_req = https.request(postOption, function(error,body) {
-            console.log(`error:${JSON.stringify(error)}`);
-            console.log(`body:${JSON.stringify(body)}`)
-        })
+        };
+        /*let post_req = https.request(postOption, function(error,body) {
+         console.log(`error:${JSON.stringify(error)}`);
+         console.log(`body:${JSON.stringify(body)}`)
+         })*/
         res.json('sendVoice');
     });
 };
