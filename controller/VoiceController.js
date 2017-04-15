@@ -39,7 +39,6 @@ module.exports = function (app) {
     app.post(`${PREFIX}/recognitionCallback`, urlencodedParser, (req, res) => {
         if (req.body) {
             let result = req.body;
-            console.log(req);
             voiceService.save({
                 code: result.code + '',
                 message: result.message + '',//成功或者失败的文字描述
