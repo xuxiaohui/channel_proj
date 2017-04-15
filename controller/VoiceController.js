@@ -65,7 +65,10 @@ module.exports = function (app) {
             source_type:0,
             url:testUrl,
             expired:1473752807
-        },body => {
+        },{
+            serviceType: 'aai',
+            method: 'POST'
+        },(error,body)=> {
             console.log('abc')
             console.log(JSON.stringify(body));
         });
