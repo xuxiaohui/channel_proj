@@ -36,9 +36,10 @@ let capi = new Capi({
 const PREFIX = '/voice';
 
 module.exports = function (app) {
-    app.post(`${PREFIX}/recognitionCallback`, urlencodedParser, (req, res) => {
+    app.post(`${PREFIX}/recognitionCallback`, (req, res) => {
         if (req.body) {
             let result = req.body;
+            console.log(result);
             voiceService.save({
                 code: result.code + '',
                 message: result.message + '',//成功或者失败的文字描述
