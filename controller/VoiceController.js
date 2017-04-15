@@ -66,6 +66,7 @@ module.exports = function (app) {
             url:testUrl,
             expired:1473752807
         },{},body => {
+            console.log('abc')
             console.log(JSON.stringify(body));
         });
         res.json('sendVoice');
