@@ -7,6 +7,7 @@ let bodyParser = require('body-parser');
 
 let app = express();
 let ShortUrlController = require('./controller/ShortUrlController');
+let VoiceController = require('./controller/VoiceController');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,6 +24,7 @@ app.use('/public',express.static(path.join(__dirname, 'public')));
 //app.use('/', index);
 //app.use('/users', users);
 ShortUrlController(app);
+VoiceController(app);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
