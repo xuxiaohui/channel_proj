@@ -8,7 +8,11 @@ var multer  = require('multer');
 let urlencodedParser = bodyParser.urlencoded({ extended: false });
 let request = require('request');
 let Channel = require('../dao/schema/Channel');
+let ErrorLog = require('../dao/schema/ErrorLog');
 let channelService = require('../services/channelService');
+let fs = require('fs');
+let path = require('path')
+
 var storage = multer.diskStorage({
     //设置上传后文件路径，uploads文件夹会自动创建。
     destination: function (req, file, cb) {
@@ -37,6 +41,22 @@ module.exports = function (app) {
             })
             res.render('channel_index',{channelList:list});
             console.log(list);
+        });
+    });
+
+    app.post('/savelog',(req, res) => {
+        if (!req.body) return res.sendStatus(400);
+        //console.log(__dirname);
+        fs.readFile(path.resolve(__dirname,'../logopath.json'), 'utf8', function (err, data) {
+            if (err){
+                return;
+            }
+            let obj = JSON.parse(data);
+            for(let key in obj) {
+                if (obj[key].indexOf(req.body.path)>=0) {
+                    ErrorLog(req.body).save();
+                }
+            }
         });
     });
 
@@ -79,14 +99,13 @@ module.exports = function (app) {
                 res.json({code:5000,reason:err});
             })
         }
-        console.log(requestArr);
     });
 
     app.post('/uploadImageToLocal',upload.single('file'),(req, resp) => {
         console.log(req.file.path);
         let data = {
             path:req.file.path
-        }
+        };
         resp.json({code:0,data});
     })
 };
